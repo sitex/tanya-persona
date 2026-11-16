@@ -1,0 +1,24 @@
+name: Offline checks
+on: [push, pull_request]
+permissions:
+  contents: read
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+        with:
+          version: "0.7.11"
+          python-version: "3.12"
+      - run: uv sync --locked
+      - name: Strict checks and offline synthetic tests
+        env:
+          UV_OFFLINE: "1"
+          PYTHONDONTWRITEBYTECODE: "1"
+        run: |
+          uv run --locked --no-sync ruff check .
+          uv run --locked --no-sync ruff format --check .
+          uv run --locked --no-sync basedpyright
+          uv run --locked --no-sync pytest -q
+      - run: uv build

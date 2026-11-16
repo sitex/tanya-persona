@@ -1,0 +1,51 @@
+[project]
+name = "tanya-persona"
+version = "0.1.0"
+description = "Portable, bounded persona and turn delivery contracts for AI companions"
+readme = "README.md"
+requires-python = ">=3.12"
+license = "MIT"
+license-files = ["LICENSE"]
+dependencies = ["pydantic>=2.10,<3"]
+
+[build-system]
+requires = ["hatchling>=1.27,<2"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/tanya_persona"]
+
+[tool.hatch.build.targets.wheel.force-include]
+"THIRD_PARTY.md" = "tanya_persona/THIRD_PARTY.md"
+
+[tool.hatch.build.targets.sdist]
+include = ["src", "tests", "README.md", "CONTRACT.md", "LICENSE", "THIRD_PARTY.md", ".gitignore", "pyproject.toml", "uv.lock"]
+
+[dependency-groups]
+dev = ["basedpyright>=1.29", "pytest>=8.3", "ruff>=0.11"]
+
+[tool.basedpyright]
+typeCheckingMode = "all"
+pythonVersion = "3.12"
+pythonPlatform = "All"
+include = ["src", "tests"]
+
+[tool.ruff]
+target-version = "py312"
+line-length = 88
+
+[tool.ruff.lint]
+select = ["ALL"]
+# Formatter conflicts, alternative docstring conventions, per-file copyright.
+ignore = ["COM812", "ISC001", "D203", "D213", "CPY001"]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**/*.py" = ["S101", "PLR2004", "D"]
+
+[tool.ruff.lint.pydocstyle]
+convention = "google"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = ["-ra", "--strict-config", "--strict-markers"]
+filterwarnings = ["error"]
